@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client"; // import all the varibles from api-client as apiClient
-//import { useAppContext } from "../contexts/AppContext";
-//import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 export type RegisterFormData = {
   firstName: string;
@@ -13,9 +13,9 @@ export type RegisterFormData = {
 };
 
 const Register = () => {
-  // const queryClient = useQueryClient();
-  // const navigate = useNavigate();
-  // const { showToast } = useAppContext();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { showToast } = useAppContext();
 
   const {
     register,
@@ -27,18 +27,18 @@ const Register = () => {
 
   // mutation hooks connect local api-client to our registration page 
   const mutation = useMutation(apiClient.register, {
-    onSuccess: () => {
-      // showToast({ message: "Registration Success!", type: "SUCCESS" });
-      // await queryClient.invalidateQueries("validateToken");
-      // navigate("/");
+    onSuccess: async () => {
+      showToast({ message: "Registration Success!", type: "SUCCESS" });
+      await queryClient.invalidateQueries("validateToken");
+      navigate("/");
 
-      console.log("registration succesfull")
+      // console.log("registration succesfull") // Testing
     },
     onError: (error: Error) => {
       // Error is object came from api-client.ts
-      // showToast({ message: error.message, type: "ERROR" });
+      showToast({ message: error.message, type: "ERROR" });
 
-      console.log(error.message)
+      // console.log(error.message) // Testing
     },
   });
 
